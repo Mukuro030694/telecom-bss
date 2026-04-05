@@ -1,0 +1,42 @@
+<div class="mb-3">
+    <label class="form-label fw-semibold">Название <span class="text-danger">*</span></label>
+    <input type="text"
+           name="name"
+           class="form-control"
+           value="{{ tariff is defined ? tariff.name : '' }}"
+           required maxlength="100">
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-semibold">Описание</label>
+    <textarea name="description" class="form-control" rows="3">
+        {{- tariff is defined ? tariff.description : '' -}}
+    </textarea>
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-semibold">
+        Цена в месяц (₽) <span class="text-danger">*</span>
+    </label>
+    <div class="input-group">
+        <input type="number"
+               name="monthlyPrice"
+               class="form-control"
+               value="{{ tariff is defined ? (tariff.monthlyPrice / 100)|number_format(2, '.', '') : '' }}"
+               min="0" step="0.01" required>
+        <span class="input-group-text">₽</span>
+    </div>
+    <div class="form-text">Вводи в рублях — система переведёт в копейки.</div>
+</div>
+<input type="hidden" name="isActive" value="0">
+<div class="mb-3">
+    <div class="form-check form-switch">
+        <input type="checkbox"
+               name="isActive"
+               class="form-check-input"
+               id="isActive"
+               value="1"
+               {{ (tariff is not defined or tariff.isActive) ? 'checked' : '' }}>
+        <label class="form-check-label" for="isActive">Активный тариф</label>
+    </div>
+</div>

@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+{% from '_macros.html.twig' import actionButton, money, breadcrumbs %}
+
+{% block title %}{{ tariff.name }}{% endblock %}
+
+{% block body %}
+{{ breadcrumbs([
+    {label: 'Тарифы', url: path('tariff_index')},
+    {label: tariff.name}
+]) }}
+
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h1 class="h3 mb-1">{{ tariff.name }}</h1>
+        <span class="text-muted">{{ tariff.description ?? 'Без описания' }}</span>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ path('tariff_edit', {id: tariff.id}) }}"
+           class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-pencil me-1"></i>Редактировать
+        </a>
+        {% if tariff.isActive %}
+            {{ actionButton(
+                'Деактивировать',
+                path('tariff_deactivate', {id: tariff.id}),
+                'outline-danger',
+                'slash-circle',
+                'Деактивировать тариф «' ~ tariff.name ~ '»?'
+            ) }}
+        {% endif %}
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="card-subtitle text-muted mb-3">Параметры тарифа</h6>
+                <dl class="row mb-0">
+                    <dt class="col-6 text-muted fw-normal">Цена</dt>
+                    <dd class="col-6 fw-bold text-primary fs-5">
+                        {{ money(tariff.monthlyPrice) }}<span class="fs-6 fw-normal text-muted">/мес</span>
+                    </dd>
+
+                    <dt class="col-6 text-muted fw-normal">Статус</dt>
+                    <dd class="col-6">
+                        {% if tariff.isActive %}
+                            <span class="badge bg-success">Активен</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Неактивен</span>
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-6 text-muted fw-normal">Создан</dt>
+                    <dd class="col-6 text-muted small">
+                        {{ tariff.createdAt|date('d.m.Y') }}
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="card-subtitle text-muted mb-3">Активные подписки</h6>
+                {% if tariff.subscriptions is empty %}
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-people fs-1 d-block mb-2"></i>
+                        Нет активных подписчиков
+                    </div>
+                {% else %}
+                    <table class="table table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th>Клиент</th>
+                                <th>Подключён с</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sub in tariff.subscriptions %}
+                                {% if sub.isActive %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ path('customer_show', {id: sub.customer.id}) }}">
+                                                {{ sub.customer.fullName }}
+                                            </a>
+                                        </td>
+                                        <td class="text-muted small">
+                                            {{ sub.startDate|date('d.m.Y') }}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

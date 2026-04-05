@@ -1,0 +1,166 @@
+{% extends 'base.html.twig' %}
+{% from '_macros.html.twig' import statusBadge, actionButton, money, breadcrumbs, emptyState %}
+
+{% block title %}{{ customer.fullName }}{% endblock %}
+
+{% block body %}
+{{ breadcrumbs([
+    {label: 'Клиенты', url: path('customer_index')},
+    {label: customer.fullName}
+]) }}
+
+{# ── Шапка ── #}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h1 class="h3 mb-1">{{ customer.fullName }}</h1>
+        <span class="text-muted">{{ customer.email }}</span>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ path('customer_edit', {id: customer.id}) }}"
+           class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-pencil me-1"></i>Редактировать
+        </a>
+
+        {% if customer.status.value == 'active' %}
+            {{ actionButton('Приостановить', path('customer_suspend', {id: customer.id}),
+               'warning', 'pause-circle', 'Приостановить аккаунт?') }}
+        {% elseif customer.status.value == 'suspended' %}
+            {{ actionButton('Реактивировать', path('customer_reactivate', {id: customer.id}),
+               'success', 'play-circle', null) }}
+        {% endif %}
+
+        {% if customer.status.value != 'closed' %}
+            {{ actionButton('Закрыть', path('customer_close', {id: customer.id}),
+               'danger', 'x-circle', 'Закрыть аккаунт? Это действие необратимо.') }}
+        {% endif %}
+    </div>
+</div>
+
+{# ── Карточка с данными ── #}
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="card-subtitle text-muted mb-3">Основные данные</h6>
+                <dl class="row mb-0">
+                    <dt class="col-5 text-muted fw-normal">Статус</dt>
+                    <dd class="col-7">{{ statusBadge(customer.status) }}</dd>
+
+                    <dt class="col-5 text-muted fw-normal">Телефон</dt>
+                    <dd class="col-7">{{ customer.phone ?? '—' }}</dd>
+
+                    <dt class="col-5 text-muted fw-normal">Клиент с</dt>
+                    <dd class="col-7">{{ customer.createdAt|date('d.m.Y') }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    {# ── Подписки ── #}
+    <div class="col-md-8">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="card-subtitle text-muted mb-0">Подписки</h6>
+                    {% if customer.status.value == 'active' %}
+                        <a href="{{ path('subscription_assign', {customerId: customer.id}) }}"
+                           class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-plus me-1"></i>Подключить тариф
+                        </a>
+                    {% endif %}
+                </div>
+
+                {% set subscriptions = customer.subscriptions %}
+                {% if subscriptions is empty %}
+                    {{ emptyState('Нет подписок', 'tag') }}
+                {% else %}
+                    <table class="table table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th>Тариф</th>
+                                <th>Цена</th>
+                                <th>С</th>
+                                <th>Статус</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sub in subscriptions %}
+                                <tr>
+                                    <td>{{ sub.tariffPlan.name }}</td>
+                                    <td>{{ money(sub.tariffPlan.monthlyPrice) }}/мес</td>
+                                    <td class="text-muted small">
+                                        {{ sub.startDate|date('d.m.Y') }}
+                                    </td>
+                                    <td>
+                                        {% if sub.isActive %}
+                                            <span class="badge bg-success">Активна</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Отключена</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if sub.isActive %}
+                                            {{ actionButton('', path('subscription_cancel', {
+                                                customerId: customer.id, id: sub.id
+                                            }), 'outline-danger', 'x-lg', 'Отключить подписку?') }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ── Счета ── #}
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="card-subtitle text-muted mb-0">Счета</h6>
+            <a href="{{ path('invoice_generate', {customerId: customer.id}) }}"
+               class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-plus me-1"></i>Выставить счёт
+            </a>
+        </div>
+
+        {% set invoices = customer.invoices %}
+        {% if invoices is empty %}
+            {{ emptyState('Счетов нет', 'receipt') }}
+        {% else %}
+            <table class="table table-sm mb-0">
+                <thead>
+                    <tr>
+                        <th>Период</th>
+                        <th>Сумма</th>
+                        <th>Срок оплаты</th>
+                        <th>Статус</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in invoices %}
+                        <tr>
+                            <td>{{ invoice.period|date('m/Y') }}</td>
+                            <td class="fw-semibold">{{ money(invoice.totalAmount) }}</td>
+                            <td class="text-muted small">
+                                {{ invoice.dueDate|date('d.m.Y') }}
+                            </td>
+                            <td>{{ statusBadge(invoice.status) }}</td>
+                            <td>
+                                <a href="{{ path('invoice_show', {id: invoice.id}) }}"
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

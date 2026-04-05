@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+{% from '_macros.html.twig' import statusBadge, money, emptyState %}
+
+{% block title %}Счета{% endblock %}
+
+{% block body %}
+<h1 class="h3 mb-4">Счета</h1>
+
+<div class="row g-4">
+    {# Ожидают оплаты #}
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning bg-opacity-10 fw-semibold">
+                <i class="bi bi-clock me-1"></i>
+                Ожидают оплаты
+                <span class="badge bg-warning text-dark ms-1">{{ pending|length }}</span>
+            </div>
+            <div class="card-body p-0">
+                {% if pending is empty %}
+                    {{ emptyState('Нет ожидающих счетов', 'check-circle') }}
+                {% else %}
+                    <table class="table table-sm table-hover mb-0">
+                        <thead><tr>
+                            <th>Клиент</th>
+                            <th>Период</th>
+                            <th>Сумма</th>
+                            <th>До</th>
+                            <th></th>
+                        </tr></thead>
+                        <tbody>
+                            {% for invoice in pending %}
+                                <tr>
+                                    <td>{{ invoice.customer.fullName }}</td>
+                                    <td>{{ invoice.period|date('m/Y') }}</td>
+                                    <td class="fw-semibold">{{ money(invoice.totalAmount) }}</td>
+                                    <td class="text-muted small">
+                                        {{ invoice.dueDate|date('d.m.Y') }}
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('invoice_show', {id: invoice.id}) }}"
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# Просроченные #}
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-danger bg-opacity-10 fw-semibold">
+                <i class="bi bi-exclamation-triangle me-1"></i>
+                Просроченные
+                <span class="badge bg-danger ms-1">{{ overdue|length }}</span>
+            </div>
+            <div class="card-body p-0">
+                {% if overdue is empty %}
+                    {{ emptyState('Нет просроченных счетов', 'check-circle') }}
+                {% else %}
+                    <table class="table table-sm table-hover mb-0">
+                        <thead><tr>
+                            <th>Клиент</th>
+                            <th>Период</th>
+                            <th>Сумма</th>
+                            <th></th>
+                        </tr></thead>
+                        <tbody>
+                            {% for invoice in overdue %}
+                                <tr class="table-danger">
+                                    <td>{{ invoice.customer.fullName }}</td>
+                                    <td>{{ invoice.period|date('m/Y') }}</td>
+                                    <td class="fw-semibold">{{ money(invoice.totalAmount) }}</td>
+                                    <td>
+                                        <a href="{{ path('invoice_show', {id: invoice.id}) }}"
+                                           class="btn btn-outline-danger btn-sm">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

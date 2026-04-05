@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+{% from '_macros.html.twig' import breadcrumbs, money %}
+
+{% block title %}Подключить тариф{% endblock %}
+
+{% block body %}
+{{ breadcrumbs([
+    {label: 'Клиенты', url: path('customer_index')},
+    {label: customer.fullName, url: path('customer_show', {id: customer.id})},
+    {label: 'Подключить тариф'}
+]) }}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="h5 mb-1">Подключить тариф</h2>
+                <p class="text-muted mb-4">Клиент: {{ customer.fullName }}</p>
+
+                {% if tariffs is empty %}
+                    <div class="alert alert-warning">
+                        Нет доступных активных тарифов.
+                        <a href="{{ path('tariff_create') }}">Создать тариф</a>
+                    </div>
+                {% else %}
+                    <form method="post"
+                          action="{{ path('subscription_assign', {customerId: customer.id}) }}">
+                        <div class="mb-4">
+                            {% for tariff in tariffs %}
+                                <div class="form-check border rounded p-3 mb-2">
+                                    <input class="form-check-input"
+                                           type="radio"
+                                           name="tariffPlanId"
+                                           id="tariff_{{ tariff.id }}"
+                                           value="{{ tariff.id }}"
+                                           required>
+                                    <label class="form-check-label w-100"
+                                           for="tariff_{{ tariff.id }}">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="fw-semibold">{{ tariff.name }}</span>
+                                            <span class="text-primary fw-bold">
+                                                {{ money(tariff.monthlyPrice) }}/мес
+                                            </span>
+                                        </div>
+                                        {% if tariff.description %}
+                                            <div class="text-muted small mt-1">
+                                                {{ tariff.description }}
+                                            </div>
+                                        {% endif %}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg me-1"></i>Подключить
+                            </button>
+                            <a href="{{ path('customer_show', {id: customer.id}) }}"
+                               class="btn btn-outline-secondary">Отмена</a>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

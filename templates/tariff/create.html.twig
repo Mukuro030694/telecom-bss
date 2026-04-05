@@ -1,0 +1,23 @@
+{# create.html.twig #}
+{% extends 'base.html.twig' %}
+{% from '_macros.html.twig' import breadcrumbs %}
+{% block title %}Новый тариф{% endblock %}
+{% block body %}
+{{ breadcrumbs([{label: 'Тарифы', url: path('tariff_index')}, {label: 'Новый тариф'}]) }}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="h5 mb-4">Новый тариф</h2>
+                <form method="post" action="{{ path('tariff_create') }}">
+                    {% include 'tariff/_form.html.twig' %}
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">Создать</button>
+                        <a href="{{ path('tariff_index') }}" class="btn btn-outline-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

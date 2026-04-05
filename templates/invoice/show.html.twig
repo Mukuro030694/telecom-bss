@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+{% from '_macros.html.twig' import statusBadge, actionButton, money, breadcrumbs %}
+
+{% block title %}Счёт {{ invoice.period|date('m/Y') }}{% endblock %}
+
+{% block body %}
+{{ breadcrumbs([
+    {label: 'Счета', url: path('invoice_index')},
+    {label: 'Счёт ' ~ invoice.period|date('m/Y')}
+]) }}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+
+                {# Шапка счёта #}
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <h2 class="h4 mb-1">
+                            Счёт за {{ invoice.period|date('F Y') }}
+                        </h2>
+                        <a href="{{ path('customer_show', {id: invoice.customer.id}) }}"
+                           class="text-muted text-decoration-none">
+                            <i class="bi bi-person me-1"></i>{{ invoice.customer.fullName }}
+                        </a>
+                    </div>
+                    {{ statusBadge(invoice.status) }}
+                </div>
+
+                {# Позиции счёта #}
+                <table class="table mb-3">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Услуга</th>
+                            <th class="text-end">Сумма</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in invoice.items %}
+                            <tr>
+                                <td>{{ item.description }}</td>
+                                <td class="text-end">{{ money(item.amount) }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <th>Итого</th>
+                            <th class="text-end fs-5">{{ money(invoice.totalAmount) }}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                {# Мета-данные #}
+                <dl class="row small text-muted mb-4">
+                    <dt class="col-5">Срок оплаты</dt>
+                    <dd class="col-7">{{ invoice.dueDate|date('d.m.Y') }}</dd>
+
+                    {% if invoice.paidAt %}
+                        <dt class="col-5">Оплачен</dt>
+                        <dd class="col-7">{{ invoice.paidAt|date('d.m.Y H:i') }}</dd>
+                    {% endif %}
+
+                    <dt class="col-5">Создан</dt>
+                    <dd class="col-7">{{ invoice.createdAt|date('d.m.Y H:i') }}</dd>
+                </dl>
+
+                {# Действия #}
+                <div class="d-flex gap-2">
+                    {% if invoice.status.value == 'pending' %}
+                        {{ actionButton(
+                            'Отметить оплаченным',
+                            path('invoice_pay', {id: invoice.id}),
+                            'success', 'check-circle',
+                            'Подтвердить оплату счёта?'
+                        ) }}
+                    {% endif %}
+                    <a href="{{ path('customer_show', {id: invoice.customer.id}) }}"
+                       class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i>К клиенту
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

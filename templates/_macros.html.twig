@@ -1,0 +1,47 @@
+{# Бейдж статуса клиента/счёта #}
+{% macro statusBadge(status) %}
+    <span class="badge bg-{{ status.badgeClass() }}">
+        {{ status.label() }}
+    </span>
+{% endmacro %}
+
+{# Кнопка-форма для POST-действий без данных (suspend, close, pay...) #}
+{% macro actionButton(label, url, style, icon, confirm) %}
+    <form method="post" action="{{ url }}" class="d-inline"
+          {% if confirm %}onsubmit="return confirm('{{ confirm }}')"{% endif %}>
+        <button type="submit" class="btn btn-{{ style }} btn-sm">
+            {% if icon %}<i class="bi bi-{{ icon }} me-1"></i>{% endif %}
+            {{ label }}
+        </button>
+    </form>
+{% endmacro %}
+
+{# Форматирование суммы из копеек в рубли #}
+{% macro money(amount) %}
+    {{ (amount / 100)|number_format(2, '.', ' ') }} ₽
+{% endmacro %}
+
+{# Пустое состояние таблицы #}
+{% macro emptyState(message, icon) %}
+    <div class="text-center text-muted py-5">
+        <i class="bi bi-{{ icon ?? 'inbox' }} fs-1 d-block mb-2"></i>
+        {{ message }}
+    </div>
+{% endmacro %}
+
+{# Хлебные крошки #}
+{% macro breadcrumbs(items) %}
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            {% for item in items %}
+                {% if loop.last %}
+                    <li class="breadcrumb-item active">{{ item.label }}</li>
+                {% else %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ item.url }}">{{ item.label }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    </nav>
+{% endmacro %}

@@ -1,0 +1,9 @@
+framework:
+    messenger:
+        transports:
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+
+        routing:
+            # Всё что отправляется через EventDispatcher — в очередь
+            'App\Event\InvoiceGeneratedEvent': async

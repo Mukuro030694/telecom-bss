@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  ci:
+    name: PHP ${{ matrix.php-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version: [ '8.2' ]
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: telecom_bss_test
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: pdo, pdo_pgsql, intl, uuid
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Check code style
+        run: vendor/bin/php-cs-fixer fix --dry-run --diff
+
+      - name: Run PHPStan
+        run: php vendor/phpstan/phpstan/phpstan analyse src --level=6 --memory-limit=512M
+
+      - name: Run migrations
+        env:
+          DATABASE_URL: postgresql://app:secret@127.0.0.1:5432/telecom_bss_test
+        run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
+
+      - name: Load fixtures
+        env:
+          DATABASE_URL: postgresql://app:secret@127.0.0.1:5432/telecom_bss_test
+        run: php bin/console doctrine:fixtures:load --no-interaction --env=test
+
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql://app:secret@127.0.0.1:5432/telecom_bss_test
+        run: php bin/phpunit

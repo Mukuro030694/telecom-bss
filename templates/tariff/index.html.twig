@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+{% from '_macros.html.twig' import actionButton, money, emptyState %}
+
+{% block title %}Тарифы{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Тарифные планы</h1>
+    <a href="{{ path('tariff_create') }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-1"></i>Новый тариф
+    </a>
+</div>
+
+{% if tariffs is empty %}
+    {{ emptyState('Тарифы не созданы', 'tags') }}
+{% else %}
+    <div class="row g-3">
+        {% for tariff in tariffs %}
+            <div class="col-md-4">
+                <div class="card shadow-sm h-100 {{ not tariff.isActive ? 'opacity-50' }}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0">{{ tariff.name }}</h5>
+                            {% if tariff.isActive %}
+                                <span class="badge bg-success">Активен</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Неактивен</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-muted small mb-3">
+                            {{ tariff.description ?? 'Без описания' }}
+                        </p>
+                        <div class="fs-4 fw-bold text-primary mb-3">
+                            {{ money(tariff.monthlyPrice) }}
+                            <span class="fs-6 fw-normal text-muted">/ мес</span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ path('tariff_show', {id: tariff.id}) }}"
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-eye me-1"></i>Подробнее
+                            </a>
+                            <a href="{{ path('tariff_edit', {id: tariff.id}) }}"
+                               class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            {% if tariff.isActive %}
+                                {{ actionButton('', path('tariff_deactivate', {id: tariff.id}),
+                                   'outline-danger', 'slash-circle',
+                                   'Деактивировать тариф «' ~ tariff.name ~ '»?') }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

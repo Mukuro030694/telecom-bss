@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+{% from '_macros.html.twig' import breadcrumbs %}
+
+{% block title %}Редактировать — {{ customer.fullName }}{% endblock %}
+
+{% block body %}
+{{ breadcrumbs([
+    {label: 'Клиенты', url: path('customer_index')},
+    {label: customer.fullName, url: path('customer_show', {id: customer.id})},
+    {label: 'Редактировать'}
+]) }}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="h5 mb-4">Редактировать клиента</h2>
+                <form method="post"
+                      action="{{ path('customer_edit', {id: customer.id}) }}">
+                    {% include 'customer/_form.html.twig' with {customer: customer} %}
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-1"></i>Сохранить
+                        </button>
+                        <a href="{{ path('customer_show', {id: customer.id}) }}"
+                           class="btn btn-outline-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{# Используется в create.html.twig и edit.html.twig #}
+{# Переменная customer может быть null (при создании) #}
+
+<div class="mb-3">
+    <label class="form-label fw-semibold">Имя <span class="text-danger">*</span></label>
+    <input type="text"
+           name="firstName"
+           class="form-control"
+           value="{{ customer is defined ? customer.firstName : '' }}"
+           required
+           maxlength="100">
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-semibold">Фамилия <span class="text-danger">*</span></label>
+    <input type="text"
+           name="lastName"
+           class="form-control"
+           value="{{ customer is defined ? customer.lastName : '' }}"
+           required
+           maxlength="100">
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+    <input type="email"
+           name="email"
+           class="form-control"
+           value="{{ customer is defined ? customer.email : '' }}"
+           {{ customer is defined ? 'readonly' : 'required' }}>
+    {% if customer is defined %}
+        <div class="form-text">Email изменить нельзя.</div>
+    {% endif %}
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-semibold">Телефон</label>
+    <input type="tel"
+           name="phone"
+           class="form-control"
+           value="{{ customer is defined ? customer.phone : '' }}"
+           placeholder="+7 999 000 00 00">
+</div>

@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+{% from '_macros.html.twig' import breadcrumbs %}
+
+{% block title %}Выставить счёт{% endblock %}
+
+{% block body %}
+{{ breadcrumbs([
+    {label: 'Клиенты', url: path('customer_index')},
+    {label: customer.fullName, url: path('customer_show', {id: customer.id})},
+    {label: 'Выставить счёт'}
+]) }}
+
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="h5 mb-1">Выставить счёт</h2>
+                <p class="text-muted mb-4">Клиент: {{ customer.fullName }}</p>
+
+                <form method="post"
+                      action="{{ path('invoice_generate', {customerId: customer.id}) }}">
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            Период <span class="text-danger">*</span>
+                        </label>
+                        <input type="month"
+                               name="period"
+                               class="form-control"
+                               value="{{ 'now'|date('Y-m') }}"
+                               required>
+                        <div class="form-text">
+                            Счёт будет выставлен за все активные подписки за этот месяц.
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-receipt me-1"></i>Сформировать
+                        </button>
+                        <a href="{{ path('customer_show', {id: customer.id}) }}"
+                           class="btn btn-outline-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+{% from '_macros.html.twig' import breadcrumbs %}
+
+{% block title %}Редактировать — {{ tariff.name }}{% endblock %}
+
+{% block body %}
+{{ breadcrumbs([
+    {label: 'Тарифы', url: path('tariff_index')},
+    {label: tariff.name, url: path('tariff_show', {id: tariff.id})},
+    {label: 'Редактировать'}
+]) }}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="h5 mb-4">Редактировать тариф</h2>
+                <form method="post"
+                      action="{{ path('tariff_edit', {id: tariff.id}) }}">
+                    {% include 'tariff/_form.html.twig' with {tariff: tariff} %}
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-1"></i>Сохранить
+                        </button>
+                        <a href="{{ path('tariff_show', {id: tariff.id}) }}"
+                           class="btn btn-outline-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
