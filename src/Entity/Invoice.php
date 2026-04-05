@@ -145,7 +145,7 @@ class Invoice
             $item->setInvoice($this);
         }
 
-return $this;
+        return $this;
     }
 
     public function removeItem(InvoiceItem $item): self
