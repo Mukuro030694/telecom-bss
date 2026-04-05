@@ -19,9 +19,10 @@ use Symfony\Component\Routing\Attribute\Route;
 class CustomerController extends AbstractController
 {
     public function __construct(
-        private readonly CustomerService    $customerService,
+        private readonly CustomerService $customerService,
         private readonly CustomerRepository $customerRepository,
-    ) {}
+    ) {
+    }
 
     #[Route('', name: 'index', methods: ['GET'])]
     public function index(Request $request): Response
@@ -34,23 +35,23 @@ class CustomerController extends AbstractController
 
         return $this->render('customer/index.html.twig', [
             'customers' => $customers,
-            'query'     => $query,
+            'query' => $query,
         ]);
     }
 
     #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
     public function create(Request $request): Response
     {
-        if (!$request->isMethod('POST')) {
+        if (! $request->isMethod('POST')) {
             return $this->render('customer/create.html.twig');
         }
 
         try {
             $dto = new CreateCustomerDTO(
                 firstName: $request->request->getString('firstName'),
-                lastName:  $request->request->getString('lastName'),
-                email:     $request->request->getString('email'),
-                phone:     $request->request->getString('phone', '') ?: null,
+                lastName: $request->request->getString('lastName'),
+                email: $request->request->getString('email'),
+                phone: $request->request->getString('phone', '') ?: null,
             );
 
             $customer = $this->customerService->create($dto);
@@ -62,6 +63,7 @@ class CustomerController extends AbstractController
             ]);
         } catch (DomainException $e) {
             $this->addFlash('error', $e->getMessage());
+
             return $this->render('customer/create.html.twig');
         }
     }
@@ -77,7 +79,7 @@ class CustomerController extends AbstractController
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'], requirements: ['id' => '[0-9a-fA-F\-]{36}'])]
     public function edit(Customer $customer, Request $request): Response
     {
-        if (!$request->isMethod('POST')) {
+        if (! $request->isMethod('POST')) {
             return $this->render('customer/edit.html.twig', [
                 'customer' => $customer,
             ]);
@@ -86,9 +88,9 @@ class CustomerController extends AbstractController
         try {
             $dto = new UpdateCustomerDTO(
                 firstName: $request->request->getString('firstName', '') ?: null,
-                lastName:  $request->request->getString('lastName', '') ?: null,
-                email:     $request->request->getString('email', '') ?: null,
-                phone:     $request->request->getString('phone', '') ?: null,
+                lastName: $request->request->getString('lastName', '') ?: null,
+                email: $request->request->getString('email', '') ?: null,
+                phone: $request->request->getString('phone', '') ?: null,
             );
 
             $this->customerService->update($customer, $dto);
@@ -98,6 +100,7 @@ class CustomerController extends AbstractController
             return $this->redirectToRoute('customer_show', ['id' => $customer->getId()]);
         } catch (DomainException $e) {
             $this->addFlash('error', $e->getMessage());
+
             return $this->render('customer/edit.html.twig', ['customer' => $customer]);
         }
     }

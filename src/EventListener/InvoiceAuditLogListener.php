@@ -13,7 +13,8 @@ final class InvoiceAuditLogListener
 {
     public function __construct(
         private readonly LoggerInterface $logger,
-    ) {}
+    ) {
+    }
 
     public function onInvoiceGenerated(InvoiceGeneratedEvent $event): void
     {
@@ -21,11 +22,11 @@ final class InvoiceAuditLogListener
         // Аудит пишем первым, чтобы факт генерации был зафиксирован
         // даже если email-листенер потом упадёт
         $this->logger->info('Invoice generated', [
-            'invoice_id'  => (string) $event->getInvoice()->getId(),
+            'invoice_id' => (string) $event->getInvoice()->getId(),
             'customer_id' => (string) $event->getCustomer()->getId(),
-            'period'      => $event->getPeriodFormatted(),
-            'total'       => $event->getTotalFormatted(),
-            'due_date'    => $event->getInvoice()->getDueDate()->format('Y-m-d'),
+            'period' => $event->getPeriodFormatted(),
+            'total' => $event->getTotalFormatted(),
+            'due_date' => $event->getInvoice()->getDueDate()->format('Y-m-d'),
         ]);
     }
 }

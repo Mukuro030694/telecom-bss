@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enum;
 
 enum CustomerStatus: string
@@ -19,11 +21,10 @@ enum CustomerStatus: string
 
     public function badgeClass(): string
     {
-        return match($this) {
-            self::ACTIVE    => 'success',
+        return match ($this) {
+            self::ACTIVE => 'success',
             self::SUSPENDED => 'warning',
-            self::CLOSED    => 'secondary',
+            self::CLOSED => 'secondary',
         };
     }
-
 }

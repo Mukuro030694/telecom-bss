@@ -14,7 +14,8 @@ final class InvoiceGeneratedEvent
 {
     public function __construct(
         private readonly Invoice $invoice,
-    ) {}
+    ) {
+    }
 
     public function getInvoice(): Invoice
     {
@@ -35,6 +36,6 @@ final class InvoiceGeneratedEvent
     public function getTotalFormatted(): string
     {
         // Конвертируем копейки в рубли для отображения
-        return number_format($this->invoice->getTotalAmount() / 100, 2, '.', ' ') . ' ₽';
+        return number_format($this->invoice->getTotalAmount() / 100, 2, '.', ' ').' ₽';
     }
 }

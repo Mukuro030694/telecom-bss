@@ -8,7 +8,6 @@ use App\DTO\Customer\CreateCustomerDTO;
 use App\DTO\Customer\UpdateCustomerDTO;
 use App\Entity\Customer;
 use App\Enum\CustomerStatus;
-use App\Exception\CustomerNotFoundException;
 use App\Exception\DomainException;
 use App\Repository\CustomerRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,10 +17,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class CustomerService
 {
     public function __construct(
-        private readonly CustomerRepository      $customerRepository,
-        private readonly EntityManagerInterface  $em,
-        private readonly ValidatorInterface      $validator,
-    ) {}
+        private readonly CustomerRepository $customerRepository,
+        private readonly EntityManagerInterface $em,
+        private readonly ValidatorInterface $validator,
+    ) {
+    }
 
     public function create(CreateCustomerDTO $dto): Customer
     {
@@ -29,10 +29,8 @@ class CustomerService
 
         // Бизнес-правило: email должен быть уникальным
         $existing = $this->customerRepository->findByEmail($dto->email);
-        if ($existing !== null) {
-            throw new DomainException(
-                "Такой email {$dto->email} уже используется."
-            );
+        if (null !== $existing) {
+            throw new DomainException("Такой email {$dto->email} уже используется.");
         }
 
         $customer = new Customer();
@@ -52,18 +50,18 @@ class CustomerService
         $this->validate($dto);
 
         // Бизнес-правило: нельзя редактировать закрытого клиента
-        if ($customer->getStatus() === CustomerStatus::CLOSED) {
+        if (CustomerStatus::CLOSED === $customer->getStatus()) {
             throw new DomainException('Нельзя редактировать закрытого клиента.');
         }
 
         // Partial update — меняем только то что пришло
-        if ($dto->firstName !== null) {
+        if (null !== $dto->firstName) {
             $customer->setFirstName($dto->firstName);
         }
-        if ($dto->lastName !== null) {
+        if (null !== $dto->lastName) {
             $customer->setLastName($dto->lastName);
         }
-        if ($dto->phone !== null) {
+        if (null !== $dto->phone) {
             $customer->setPhone($dto->phone);
         }
 
@@ -75,10 +73,8 @@ class CustomerService
     public function suspend(Customer $customer): void
     {
         // Явная проверка перехода статуса
-        if ($customer->getStatus() !== CustomerStatus::ACTIVE) {
-            throw new DomainException(
-                "Нельзя приостановить клиента, имеющего статус: {$customer->getStatus()->label()}"
-            );
+        if (CustomerStatus::ACTIVE !== $customer->getStatus()) {
+            throw new DomainException("Нельзя приостановить клиента, имеющего статус: {$customer->getStatus()->label()}");
         }
 
         $customer->setStatus(CustomerStatus::SUSPENDED);
@@ -87,7 +83,7 @@ class CustomerService
 
     public function reactivate(Customer $customer): void
     {
-        if ($customer->getStatus() !== CustomerStatus::SUSPENDED) {
+        if (CustomerStatus::SUSPENDED !== $customer->getStatus()) {
             throw new DomainException('Реактивировать можно только приостановленного клиента.');
         }
 
@@ -100,9 +96,7 @@ class CustomerService
         // Бизнес-правило: нельзя закрыть если есть неоплаченные счета
         foreach ($customer->getInvoices() as $invoice) {
             if ($invoice->getStatus()->isPending()) {
-                throw new DomainException(
-                    'Нельзя закрыть аккаунт c неоплаченными счетами .'
-                );
+                throw new DomainException('Нельзя закрыть аккаунт c неоплаченными счетами .');
             }
         }
 

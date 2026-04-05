@@ -19,59 +19,59 @@ class CustomerFixtures extends Fixture implements DependentFixtureInterface
     private array $customers = [
         [
             'firstName' => 'Алексей',
-            'lastName'  => 'Иванов',
-            'email'     => 'ivanov@example.com',
-            'phone'     => '+7 900 000 01 01',
-            'status'    => CustomerStatus::ACTIVE,
+            'lastName' => 'Иванов',
+            'email' => 'ivanov@example.com',
+            'phone' => '+7 900 000 01 01',
+            'status' => CustomerStatus::ACTIVE,
         ],
         [
             'firstName' => 'Мария',
-            'lastName'  => 'Петрова',
-            'email'     => 'petrova@example.com',
-            'phone'     => '+7 900 000 01 02',
-            'status'    => CustomerStatus::ACTIVE,
+            'lastName' => 'Петрова',
+            'email' => 'petrova@example.com',
+            'phone' => '+7 900 000 01 02',
+            'status' => CustomerStatus::ACTIVE,
         ],
         [
             'firstName' => 'Дмитрий',
-            'lastName'  => 'Сидоров',
-            'email'     => 'sidorov@example.com',
-            'phone'     => null,
-            'status'    => CustomerStatus::ACTIVE,
+            'lastName' => 'Сидоров',
+            'email' => 'sidorov@example.com',
+            'phone' => null,
+            'status' => CustomerStatus::ACTIVE,
         ],
         [
             'firstName' => 'Елена',
-            'lastName'  => 'Козлова',
-            'email'     => 'kozlova@example.com',
-            'phone'     => '+7 900 000 01 04',
-            'status'    => CustomerStatus::SUSPENDED, // для проверки UI suspended
+            'lastName' => 'Козлова',
+            'email' => 'kozlova@example.com',
+            'phone' => '+7 900 000 01 04',
+            'status' => CustomerStatus::SUSPENDED, // для проверки UI suspended
         ],
         [
             'firstName' => 'Сергей',
-            'lastName'  => 'Новиков',
-            'email'     => 'novikov@example.com',
-            'phone'     => '+7 900 000 01 05',
-            'status'    => CustomerStatus::ACTIVE,
+            'lastName' => 'Новиков',
+            'email' => 'novikov@example.com',
+            'phone' => '+7 900 000 01 05',
+            'status' => CustomerStatus::ACTIVE,
         ],
         [
             'firstName' => 'Анна',
-            'lastName'  => 'Морозова',
-            'email'     => 'morozova@example.com',
-            'phone'     => '+7 900 000 01 06',
-            'status'    => CustomerStatus::ACTIVE,
+            'lastName' => 'Морозова',
+            'email' => 'morozova@example.com',
+            'phone' => '+7 900 000 01 06',
+            'status' => CustomerStatus::ACTIVE,
         ],
         [
             'firstName' => 'Игорь',
-            'lastName'  => 'Волков',
-            'email'     => 'volkov@example.com',
-            'phone'     => null,
-            'status'    => CustomerStatus::CLOSED, // закрытый — для проверки UI
+            'lastName' => 'Волков',
+            'email' => 'volkov@example.com',
+            'phone' => null,
+            'status' => CustomerStatus::CLOSED, // закрытый — для проверки UI
         ],
         [
             'firstName' => 'Ольга',
-            'lastName'  => 'Лебедева',
-            'email'     => 'lebedeva@example.com',
-            'phone'     => '+7 900 000 01 08',
-            'status'    => CustomerStatus::ACTIVE,
+            'lastName' => 'Лебедева',
+            'email' => 'lebedeva@example.com',
+            'phone' => '+7 900 000 01 08',
+            'status' => CustomerStatus::ACTIVE,
         ],
     ];
 
@@ -87,7 +87,7 @@ class CustomerFixtures extends Fixture implements DependentFixtureInterface
 
             $manager->persist($customer);
 
-            $this->addReference(self::CUSTOMER_PREFIX . $index, $customer);
+            $this->addReference(self::CUSTOMER_PREFIX.$index, $customer);
         }
 
         $manager->flush();

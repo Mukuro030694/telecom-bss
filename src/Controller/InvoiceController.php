@@ -18,17 +18,18 @@ use Symfony\Component\Routing\Attribute\Route;
 class InvoiceController extends AbstractController
 {
     public function __construct(
-        private readonly BillingService   $billingService,
+        private readonly BillingService $billingService,
         private readonly InvoiceRepository $invoiceRepository,
-    ) {}
+    ) {
+    }
 
     // Все счета — для дашборда или страницы биллинга
     #[Route('', name: 'index', methods: ['GET'])]
     public function index(): Response
     {
         return $this->render('invoice/index.html.twig', [
-            'pending'  => $this->invoiceRepository->findByStatus(\App\Enum\InvoiceStatus::PENDING),
-            'overdue'  => $this->invoiceRepository->findByStatus(\App\Enum\InvoiceStatus::OVERDUE),
+            'pending' => $this->invoiceRepository->findByStatus(\App\Enum\InvoiceStatus::PENDING),
+            'overdue' => $this->invoiceRepository->findByStatus(\App\Enum\InvoiceStatus::OVERDUE),
         ]);
     }
 
@@ -45,9 +46,9 @@ class InvoiceController extends AbstractController
     public function generate(
         #[\Symfony\Bridge\Doctrine\Attribute\MapEntity(id: 'customerId')]
         Customer $customer,
-        Request  $request,
+        Request $request,
     ): Response {
-        if (!$request->isMethod('POST')) {
+        if (! $request->isMethod('POST')) {
             return $this->render('invoice/generate.html.twig', [
                 'customer' => $customer,
             ]);
@@ -56,7 +57,7 @@ class InvoiceController extends AbstractController
         try {
             // Из формы приходит строка "2024-03" — парсим в дату
             $periodString = $request->request->getString('period');
-            $period = new \DateTimeImmutable($periodString . '-01');
+            $period = new \DateTimeImmutable($periodString.'-01');
 
             $invoice = $this->billingService->generateMonthlyInvoice($customer, $period);
 
@@ -65,6 +66,7 @@ class InvoiceController extends AbstractController
             return $this->redirectToRoute('invoice_show', ['id' => $invoice->getId()]);
         } catch (DomainException $e) {
             $this->addFlash('error', $e->getMessage());
+
             return $this->render('invoice/generate.html.twig', ['customer' => $customer]);
         }
     }

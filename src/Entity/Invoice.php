@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Uid\Uuid;
 use App\Enum\InvoiceStatus;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'invoices')]
@@ -27,7 +26,6 @@ class Invoice
 
     #[ORM\Column(enumType: InvoiceStatus::class)]
     private InvoiceStatus $status;
-
 
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $dueDate;
@@ -52,26 +50,110 @@ class Invoice
         $this->createdAt = new \DateTimeImmutable();
     }
 
-    public function getId(): ?int { return $this->id; }
-    public function getPeriod(): \DateTimeImmutable { return $this->period; }
-    public function setPeriod(\DateTimeImmutable $period): self { $this->period = $period; return $this; }
-    public function getTotalAmount(): int { return $this->totalAmount; }
-    public function setTotalAmount(int $totalAmount): self { $this->totalAmount = $totalAmount; return $this; }
-    public function getStatus(): InvoiceStatus { return $this->status; }
-    public function setStatus(InvoiceStatus $status): self { $this->status = $status; return $this; }
-    public function getDueDate(): \DateTimeImmutable { return $this->dueDate; }
-    public function setDueDate(\DateTimeImmutable $dueDate): self { $this->dueDate = $dueDate; return $this; }
-    public function getPaidAt(): ?\DateTimeImmutable { return $this->paidAt; }
-    public function setPaidAt(?\DateTimeImmutable $paidAt): self { $this->paidAt = $paidAt; return $this; }
-    public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-    public function getCustomer(): Customer { return $this->customer; }
-    public function setCustomer(Customer $customer): self { $this->customer = $customer; return $this; }
-    
+    public function getPeriod(): \DateTimeImmutable
+    {
+        return $this->period;
+    }
+
+    public function setPeriod(\DateTimeImmutable $period): self
+    {
+        $this->period = $period;
+
+        return $this;
+    }
+
+    public function getTotalAmount(): int
+    {
+        return $this->totalAmount;
+    }
+
+    public function setTotalAmount(int $totalAmount): self
+    {
+        $this->totalAmount = $totalAmount;
+
+        return $this;
+    }
+
+    public function getStatus(): InvoiceStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(InvoiceStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getDueDate(): \DateTimeImmutable
+    {
+        return $this->dueDate;
+    }
+
+    public function setDueDate(\DateTimeImmutable $dueDate): self
+    {
+        $this->dueDate = $dueDate;
+
+        return $this;
+    }
+
+    public function getPaidAt(): ?\DateTimeImmutable
+    {
+        return $this->paidAt;
+    }
+
+    public function setPaidAt(?\DateTimeImmutable $paidAt): self
+    {
+        $this->paidAt = $paidAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function getCustomer(): Customer
+    {
+        return $this->customer;
+    }
+
+    public function setCustomer(Customer $customer): self
+    {
+        $this->customer = $customer;
+
+        return $this;
+    }
+
     /** @return Collection<int, InvoiceItem> */
-    public function getItems(): Collection { return $this->items; }
-    public function addItem(InvoiceItem $item): self { if (!$this->items->contains($item)) { $this->items->add($item); $item->setInvoice($this); } return $this; }
-    public function removeItem(InvoiceItem $item): self { $this->items->removeElement($item); return $this; }
+    public function getItems(): Collection
+    {
+        return $this->items;
+    }
+
+    public function addItem(InvoiceItem $item): self
+    {
+        if (! $this->items->contains($item)) {
+            $this->items->add($item);
+            $item->setInvoice($this);
+        }
+
+return $this;
+    }
+
+    public function removeItem(InvoiceItem $item): self
+    {
+        $this->items->removeElement($item);
+
+        return $this;
+    }
 
     public function recalculateTotal(): self
     {

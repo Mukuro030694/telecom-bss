@@ -18,18 +18,19 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class BillingService
 {
     public function __construct(
-        private readonly InvoiceRepository       $invoiceRepository,
-        private readonly SubscriptionRepository  $subscriptionRepository,
-        private readonly EntityManagerInterface  $em,
+        private readonly InvoiceRepository $invoiceRepository,
+        private readonly SubscriptionRepository $subscriptionRepository,
+        private readonly EntityManagerInterface $em,
         private readonly EventDispatcherInterface $eventDispatcher,
-    ) {}
+    ) {
+    }
 
     /**
      * Генерация счёта за месяц.
      * $period — любая дата внутри нужного месяца, нормализуем до первого числа.
      */
     public function generateMonthlyInvoice(
-        Customer           $customer,
+        Customer $customer,
         \DateTimeImmutable $period,
     ): Invoice {
         // Нормализуем период до первого числа месяца
@@ -42,19 +43,15 @@ class BillingService
             $customer,
             $normalizedPeriod
         );
-        if ($existing !== null) {
-            throw new DomainException(
-                "Счёт за {$normalizedPeriod->format('m/Y')} уже существует."
-            );
+        if (null !== $existing) {
+            throw new DomainException("Счёт за {$normalizedPeriod->format('m/Y')} уже существует.");
         }
 
         // Получаем активные подписки — это позиции счёта
         $subscriptions = $this->subscriptionRepository->findActiveByCustomer($customer);
 
         if (empty($subscriptions)) {
-            throw new DomainException(
-                'Нельзя выставить счёт: y клиента нет активных подписок.'
-            );
+            throw new DomainException('Нельзя выставить счёт: y клиента нет активных подписок.');
         }
 
         $invoice = new Invoice();
@@ -86,10 +83,8 @@ class BillingService
 
     public function markAsPaid(Invoice $invoice): void
     {
-        if ($invoice->getStatus() !== InvoiceStatus::PENDING) {
-            throw new DomainException(
-                "Нельзя оплатить счёт co статусом: {$invoice->getStatus()->label()}"
-            );
+        if (InvoiceStatus::PENDING !== $invoice->getStatus()) {
+            throw new DomainException("Нельзя оплатить счёт co статусом: {$invoice->getStatus()->label()}");
         }
 
         $invoice->setStatus(InvoiceStatus::PAID);
@@ -100,7 +95,7 @@ class BillingService
 
     public function markAsOverdue(Invoice $invoice): void
     {
-        if ($invoice->getStatus() !== InvoiceStatus::PENDING) {
+        if (InvoiceStatus::PENDING !== $invoice->getStatus()) {
             return; // идемпотентно — уже не pending, просто игнорируем
         }
 
@@ -123,7 +118,7 @@ class BillingService
 
         foreach ($overdueInvoices as $invoice) {
             $invoice->setStatus(InvoiceStatus::OVERDUE);
-            $processed++;
+            ++$processed;
         }
 
         // flush один раз для всего пакета — не N раз в цикле

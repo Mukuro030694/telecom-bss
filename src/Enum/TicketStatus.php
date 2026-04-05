@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enum;
 
 enum TicketStatus: string
@@ -21,12 +23,11 @@ enum TicketStatus: string
 
     public function badgeClass(): string
     {
-        return match($this) {
+        return match ($this) {
             self::OPEN => 'primary',
             self::IN_PROGRESS => 'warning',
             self::RESOLVED => 'success',
             self::CLOSED => 'secondary',
         };
     }
-
 }

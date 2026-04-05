@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enum;
 
 enum InvoiceStatus: string
@@ -21,20 +23,17 @@ enum InvoiceStatus: string
 
     public function badgeClass(): string
     {
-        
-    return match($this) {
-        self::PENDING   => 'warning',
-        self::PAID      => 'success',
-        self::OVERDUE   => 'danger',
-        self::CANCELLED => 'secondary',
-    };
-
+        return match ($this) {
+            self::PENDING => 'warning',
+            self::PAID => 'success',
+            self::OVERDUE => 'danger',
+            self::CANCELLED => 'secondary',
+        };
     }
 
     // src/Enum/InvoiceStatus.php
     public function isPending(): bool
     {
-    return $this === self::PENDING;
+        return self::PENDING === $this;
     }
-
 }

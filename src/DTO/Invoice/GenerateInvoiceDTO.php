@@ -13,7 +13,7 @@ class GenerateInvoiceDTO
     public string $customerId;
 
     /**
-     * Формат: YYYY-MM (например: 2025-03)
+     * Формат: YYYY-MM (например: 2025-03).
      */
     #[Assert\NotBlank]
     #[Assert\Regex(

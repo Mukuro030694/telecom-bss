@@ -16,10 +16,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class TariffService
 {
     public function __construct(
-        private readonly TariffPlanRepository   $tariffPlanRepository,
+        private readonly TariffPlanRepository $tariffPlanRepository,
         private readonly EntityManagerInterface $em,
-        private readonly ValidatorInterface     $validator,
-    ) {}
+        private readonly ValidatorInterface $validator,
+    ) {
+    }
 
     public function create(CreateTariffDTO $dto): TariffPlan
     {
@@ -40,38 +41,36 @@ class TariffService
 
     public function update(TariffPlan $tariff, UpdateTariffDTO $dto): TariffPlan
     {
-    $this->validate($dto);
+        $this->validate($dto);
 
-    if ($dto->name !== null) {
-        $tariff->setName($dto->name);
-    }
-    if ($dto->description !== null) {
-        $tariff->setDescription($dto->description);
-    }
-    if ($dto->monthlyPrice !== null) {
-        $tariff->setMonthlyPrice((int) round($dto->monthlyPrice * 100));
-    }
-    // Добавь это
-    if ($dto->isActive !== null) {
-        $tariff->setIsActive($dto->isActive);
-    }
+        if (null !== $dto->name) {
+            $tariff->setName($dto->name);
+        }
+        if (null !== $dto->description) {
+            $tariff->setDescription($dto->description);
+        }
+        if (null !== $dto->monthlyPrice) {
+            $tariff->setMonthlyPrice((int) round($dto->monthlyPrice * 100));
+        }
+        // Добавь это
+        if (null !== $dto->isActive) {
+            $tariff->setIsActive($dto->isActive);
+        }
 
-    $this->em->flush();
+        $this->em->flush();
 
-    return $tariff;
+        return $tariff;
     }
 
     public function deactivate(TariffPlan $tariff): void
     {
-        if (!$tariff->isActive()) {
+        if (! $tariff->isActive()) {
             throw new DomainException('Тариф уже деактивирован.');
         }
 
         // Бизнес-правило: нельзя деактивировать тариф с активными подписками
         if ($this->tariffPlanRepository->hasActiveSubscriptions($tariff)) {
-            throw new DomainException(
-                "Нельзя деактивировать тариф «{$tariff->getName()}» — есть активные подписки."
-            );
+            throw new DomainException("Нельзя деактивировать тариф «{$tariff->getName()}» — есть активные подписки.");
         }
 
         $tariff->setIsActive(false);

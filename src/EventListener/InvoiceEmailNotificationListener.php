@@ -14,9 +14,10 @@ use Symfony\Component\Mime\Email;
 final class InvoiceEmailNotificationListener
 {
     public function __construct(
-        private readonly MailerInterface  $mailer,
-        private readonly LoggerInterface  $logger,
-    ) {}
+        private readonly MailerInterface $mailer,
+        private readonly LoggerInterface $logger,
+    ) {
+    }
 
     public function onInvoiceGenerated(InvoiceGeneratedEvent $event): void
     {
@@ -33,14 +34,14 @@ final class InvoiceEmailNotificationListener
 
             $this->logger->info('Invoice email sent', [
                 'customer_id' => (string) $customer->getId(),
-                'invoice_id'  => (string) $event->getInvoice()->getId(),
+                'invoice_id' => (string) $event->getInvoice()->getId(),
             ]);
         } catch (\Throwable $e) {
             // Важно: НЕ пробрасываем исключение дальше.
             // Сбой уведомления не должен откатить транзакцию со счётом.
             $this->logger->error('Failed to send invoice email', [
                 'customer_id' => (string) $customer->getId(),
-                'error'       => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
         }
     }

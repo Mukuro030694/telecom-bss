@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Repository\TariffPlanRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use App\Repository\TariffPlanRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
-use App\Entity\Subscription;
 
 #[ORM\Table(name: 'tariff_plans')]
 #[ORM\Entity(repositoryClass: TariffPlanRepository::class)]
@@ -122,5 +121,4 @@ class TariffPlan
 
         return $this;
     }
-
 }

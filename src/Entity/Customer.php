@@ -3,11 +3,12 @@
 declare(strict_types=1);
 
 namespace App\Entity;
-use App\Repository\CustomerRepository;
-use Doctrine\ORM\Mapping as ORM;
+
 use App\Enum\CustomerStatus;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\CustomerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Table(name: 'customers')]
@@ -90,7 +91,7 @@ class Customer
 
     public function getFullName(): string
     {
-        return trim($this->firstName . ' ' . $this->lastName);
+        return trim($this->firstName.' '.$this->lastName);
     }
 
     public function setFullName(string $fullName): self

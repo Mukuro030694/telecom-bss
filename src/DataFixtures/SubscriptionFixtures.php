@@ -29,7 +29,7 @@ class SubscriptionFixtures extends Fixture implements DependentFixtureInterface
 
         foreach ($assignments as [$customerIndex, $tariffRef, $isActive, $monthsAgo]) {
             $customer = $this->getReference(
-                CustomerFixtures::CUSTOMER_PREFIX . $customerIndex,
+                CustomerFixtures::CUSTOMER_PREFIX.$customerIndex,
                 \App\Entity\Customer::class
             );
             $tariff = $this->getReference($tariffRef, \App\Entity\TariffPlan::class);
@@ -45,7 +45,7 @@ class SubscriptionFixtures extends Fixture implements DependentFixtureInterface
             $subscription->setIsActive($isActive);
 
             // Если отменена — ставим дату окончания
-            if (!$isActive) {
+            if (! $isActive) {
                 $subscription->setEndDate(new \DateTimeImmutable('last month'));
             }
 

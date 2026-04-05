@@ -7,7 +7,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: "invoice_items")]
+#[ORM\Table(name: 'invoice_items')]
 class InvoiceItem
 {
     #[ORM\Id]
@@ -38,6 +38,7 @@ class InvoiceItem
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -49,6 +50,7 @@ class InvoiceItem
     public function setAmount(int $amount): self
     {
         $this->amount = $amount;
+
         return $this;
     }
 
@@ -60,6 +62,7 @@ class InvoiceItem
     public function setInvoice(Invoice $invoice): self
     {
         $this->invoice = $invoice;
+
         return $this;
     }
 }

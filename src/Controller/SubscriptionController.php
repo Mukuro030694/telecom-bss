@@ -6,7 +6,6 @@ namespace App\Controller;
 
 use App\Entity\Customer;
 use App\Entity\Subscription;
-use App\Entity\TariffPlan;
 use App\Exception\DomainException;
 use App\Repository\TariffPlanRepository;
 use App\Service\SubscriptionService;
@@ -19,23 +18,24 @@ use Symfony\Component\Routing\Attribute\Route;
 class SubscriptionController extends AbstractController
 {
     public function __construct(
-        private readonly SubscriptionService  $subscriptionService,
+        private readonly SubscriptionService $subscriptionService,
         private readonly TariffPlanRepository $tariffPlanRepository,
-    ) {}
+    ) {
+    }
 
     #[Route('/assign', name: 'assign', methods: ['GET', 'POST'])]
     public function assign(
         // ParamConverter по имени аргумента — customerId из роута
         #[\Symfony\Bridge\Doctrine\Attribute\MapEntity(id: 'customerId')]
         Customer $customer,
-        Request  $request,
+        Request $request,
     ): Response {
         $activeTariffs = $this->tariffPlanRepository->findAllActive();
 
-        if (!$request->isMethod('POST')) {
+        if (! $request->isMethod('POST')) {
             return $this->render('subscription/assign.html.twig', [
                 'customer' => $customer,
-                'tariffs'  => $activeTariffs,
+                'tariffs' => $activeTariffs,
             ]);
         }
 
@@ -53,9 +53,10 @@ class SubscriptionController extends AbstractController
             return $this->redirectToRoute('customer_show', ['id' => $customer->getId()]);
         } catch (DomainException $e) {
             $this->addFlash('error', $e->getMessage());
+
             return $this->render('subscription/assign.html.twig', [
                 'customer' => $customer,
-                'tariffs'  => $activeTariffs,
+                'tariffs' => $activeTariffs,
             ]);
         }
     }
@@ -63,7 +64,7 @@ class SubscriptionController extends AbstractController
     #[Route('/{id}/cancel', name: 'cancel', methods: ['POST'])]
     public function cancel(
         #[\Symfony\Bridge\Doctrine\Attribute\MapEntity(id: 'customerId')]
-        Customer     $customer,
+        Customer $customer,
         Subscription $subscription,
     ): Response {
         try {

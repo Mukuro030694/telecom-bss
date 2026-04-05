@@ -10,29 +10,28 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Table(name: 'subscriptions')]
 #[ORM\Entity(repositoryClass: SubscriptionRepository::class)]
-class Subscription 
+class Subscription
 {
+    #[ORM\Id]
+    #[ORM\Column(type: 'uuid')]
+    private Uuid $id;
 
-#[ORM\Id]
-#[ORM\Column(type: 'uuid')]
-private Uuid $id;
+    #[ORM\Column(type: 'datetime_immutable')]
+    private \DateTimeImmutable $startDate;
 
-#[ORM\Column(type: 'datetime_immutable')]
-private \DateTimeImmutable $startDate;
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $endDate;
 
-#[ORM\Column(type: 'datetime_immutable', nullable: true)]
-private ?\DateTimeImmutable $endDate;
+    #[ORM\Column(type: 'boolean')]
+    private bool $isActive;
 
-#[ORM\Column(type: 'boolean')]
-private bool $isActive;
+    #[ORM\ManyToOne(targetEntity: Customer::class, inversedBy: 'subscriptions')]
+    #[ORM\JoinColumn(nullable: false)]
+    private Customer $customer;
 
-#[ORM\ManyToOne(targetEntity: Customer::class, inversedBy: 'subscriptions')]
-#[ORM\JoinColumn(nullable: false)]
-private Customer $customer;
-
-#[ORM\ManyToOne(targetEntity: TariffPlan::class, inversedBy: 'subscriptions')]
-#[ORM\JoinColumn(nullable: false)]
-private TariffPlan $tariffPlan;
+    #[ORM\ManyToOne(targetEntity: TariffPlan::class, inversedBy: 'subscriptions')]
+    #[ORM\JoinColumn(nullable: false)]
+    private TariffPlan $tariffPlan;
 
     public function __construct()
     {
@@ -47,6 +46,7 @@ private TariffPlan $tariffPlan;
     public function setCustomer(Customer $customer): self
     {
         $this->customer = $customer;
+
         return $this;
     }
 
@@ -58,6 +58,7 @@ private TariffPlan $tariffPlan;
     public function setTariffPlan(TariffPlan $tariffPlan): self
     {
         $this->tariffPlan = $tariffPlan;
+
         return $this;
     }
 
@@ -74,6 +75,7 @@ private TariffPlan $tariffPlan;
     public function setStartDate(\DateTimeImmutable $startDate): self
     {
         $this->startDate = $startDate;
+
         return $this;
     }
 
@@ -85,6 +87,7 @@ private TariffPlan $tariffPlan;
     public function setEndDate(?\DateTimeImmutable $endDate): self
     {
         $this->endDate = $endDate;
+
         return $this;
     }
 
@@ -96,6 +99,7 @@ private TariffPlan $tariffPlan;
     public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
+
         return $this;
     }
 }

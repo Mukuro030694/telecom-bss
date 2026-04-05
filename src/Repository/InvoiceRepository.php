@@ -42,7 +42,7 @@ class InvoiceRepository extends ServiceEntityRepository
      * Гарантирует что за один период не будет двух счетов.
      */
     public function findByCustomerAndPeriod(
-        Customer           $customer,
+        Customer $customer,
         \DateTimeImmutable $period,
     ): ?Invoice {
         return $this->createQueryBuilder('i')

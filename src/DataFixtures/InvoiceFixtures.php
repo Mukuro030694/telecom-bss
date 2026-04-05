@@ -22,12 +22,12 @@ class InvoiceFixtures extends Fixture implements DependentFixtureInterface
         foreach ($activeCustomerIndexes as $customerIndex) {
             /** @var \App\Entity\Customer $customer */
             $customer = $this->getReference(
-                CustomerFixtures::CUSTOMER_PREFIX . $customerIndex,
+                CustomerFixtures::CUSTOMER_PREFIX.$customerIndex,
                 \App\Entity\Customer::class
             );
 
             // Счета за 3 прошлых месяца
-            for ($monthsAgo = 3; $monthsAgo >= 1; $monthsAgo--) {
+            for ($monthsAgo = 3; $monthsAgo >= 1; --$monthsAgo) {
                 $period = (new \DateTimeImmutable())
                     ->modify("-{$monthsAgo} months")
                     ->modify('first day of this month')
@@ -51,7 +51,7 @@ class InvoiceFixtures extends Fixture implements DependentFixtureInterface
         }
 
         // Один просроченный счёт — для проверки overdue в UI
-        $overdueCustomer = $this->getReference(CustomerFixtures::CUSTOMER_PREFIX . '2', \App\Entity\Customer::class);
+        $overdueCustomer = $this->getReference(CustomerFixtures::CUSTOMER_PREFIX.'2', \App\Entity\Customer::class);
         $overduePeriod = (new \DateTimeImmutable())
             ->modify('-4 months')
             ->modify('first day of this month')
@@ -76,8 +76,8 @@ class InvoiceFixtures extends Fixture implements DependentFixtureInterface
 
     private function buildInvoice(
         \App\Entity\Customer $customer,
-        \DateTimeImmutable   $period,
-        int                  $monthsAgo,
+        \DateTimeImmutable $period,
+        int $monthsAgo,
     ): Invoice {
         $invoice = new Invoice();
         $invoice->setCustomer($customer);
@@ -88,7 +88,7 @@ class InvoiceFixtures extends Fixture implements DependentFixtureInterface
         if ($monthsAgo > 0) {
             $invoice->setStatus(InvoiceStatus::PAID);
             $invoice->setPaidAt(
-                $period->modify('+' . random_int(1, 25) . ' days')
+                $period->modify('+'.random_int(1, 25).' days')
             );
         } else {
             $invoice->setStatus(InvoiceStatus::PENDING);
@@ -96,7 +96,7 @@ class InvoiceFixtures extends Fixture implements DependentFixtureInterface
 
         // Добавляем позиции на основе активных подписок клиента
         foreach ($customer->getSubscriptions() as $subscription) {
-            if (!$subscription->isActive()) {
+            if (! $subscription->isActive()) {
                 continue;
             }
 
@@ -109,7 +109,7 @@ class InvoiceFixtures extends Fixture implements DependentFixtureInterface
             $item->setInvoice($invoice);
             $item->setDescription(
                 $subscription->getTariffPlan()->getName()
-                . ' — ' . $period->format('m/Y')
+                .' — '.$period->format('m/Y')
             );
             $item->setAmount($subscription->getTariffPlan()->getMonthlyPrice());
             $invoice->addItem($item);

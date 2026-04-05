@@ -42,8 +42,8 @@ class SubscriptionRepository extends ServiceEntityRepository
      * Клиент не может иметь две активные подписки на один тариф.
      */
     public function findActiveByCustomerAndTariff(
-        Customer    $customer,
-        TariffPlan  $tariffPlan,
+        Customer $customer,
+        TariffPlan $tariffPlan,
     ): ?Subscription {
         return $this->createQueryBuilder('s')
             ->where('s.customer = :customer')

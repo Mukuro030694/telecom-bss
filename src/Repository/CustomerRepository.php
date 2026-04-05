@@ -58,7 +58,7 @@ class CustomerRepository extends ServiceEntityRepository
      */
     public function findBySearchQuery(string $query): array
     {
-        $term = '%' . mb_strtolower(trim($query)) . '%';
+        $term = '%'.mb_strtolower(trim($query)).'%';
 
         return $this->createQueryBuilder('c')
             ->where('LOWER(c.firstName) LIKE :term')
@@ -86,10 +86,8 @@ class CustomerRepository extends ServiceEntityRepository
     {
         $customer = $this->find($id);
 
-        if ($customer === null) {
-            throw new \App\Exception\CustomerNotFoundException(
-                "Customer with id {$id} not found."
-            );
+        if (null === $customer) {
+            throw new \App\Exception\CustomerNotFoundException("Customer with id {$id} not found.");
         }
 
         return $customer;

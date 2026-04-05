@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Kernel;
 
-require dirname(__DIR__) . '/vendor/autoload.php';
+require dirname(__DIR__).'/vendor/autoload.php';
 
 $kernel = new Kernel('dev', true);
 $kernel->boot();
