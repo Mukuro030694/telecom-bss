@@ -22,7 +22,7 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_DB: telecom_bss_test
+          POSTGRES_DB: telecom_bss
           POSTGRES_USER: app
           POSTGRES_PASSWORD: secret
         ports:
