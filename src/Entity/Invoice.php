@@ -8,15 +8,15 @@ use App\Enum\InvoiceStatus;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'invoices')]
 class Invoice
 {
     #[ORM\Id]
-    #[ORM\Column]
-    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    private ?int $id = null;
+    #[ORM\Column(type: 'uuid')]
+    private Uuid $id;
 
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $period;
@@ -46,11 +46,12 @@ class Invoice
 
     public function __construct()
     {
+        $this->id = Uuid::v4();
         $this->items = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
     }
 
-    public function getId(): ?int
+    public function getId(): Uuid
     {
         return $this->id;
     }
