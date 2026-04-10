@@ -38,6 +38,7 @@ class CustomerService
         $customer->setLastName($dto->lastName);
         $customer->setEmail($dto->email);
         $customer->setPhone($dto->phone);
+        $customer->setStatus(CustomerStatus::ACTIVE);
 
         $this->em->persist($customer);
         $this->em->flush();

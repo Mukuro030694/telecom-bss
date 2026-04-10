@@ -58,8 +58,8 @@ class BillingService
         $invoice->setCustomer($customer);
         $invoice->setPeriod($normalizedPeriod);
         $invoice->setStatus(InvoiceStatus::PENDING);
-        $invoice->setDueDate($normalizedPeriod->modify('+30 days'));
-
+        $invoice->setDueDate($normalizedPeriod->modify('first day of next month'));
+        
         // Создаём позицию за каждую подписку
         foreach ($subscriptions as $subscription) {
             $item = new InvoiceItem();
