@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: telecom-bss
+    env: docker
+    region: frankfurt
+    plan: free
+    branch: main
+    healthCheckPath: /
+    envVars:
+      - key: APP_ENV
+        value: prod
+      - key: APP_SECRET
+        fromSecret: APP_SECRET
+      - key: DATABASE_URL
+        fromSecret: DATABASE_URL_INTERNAL
+      - key: MAILER_DSN
+        value: null://null
