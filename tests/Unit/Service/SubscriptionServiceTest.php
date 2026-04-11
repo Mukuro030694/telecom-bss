@@ -23,7 +23,7 @@ class SubscriptionServiceTest extends UnitTestCase
     protected function setUp(): void
     {
         $this->subscriptionRepository = $this->createMock(SubscriptionRepository::class);
-        $this->em                     = $this->createMock(EntityManagerInterface::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
 
         $this->service = new SubscriptionService(
             $this->subscriptionRepository,
@@ -38,7 +38,7 @@ class SubscriptionServiceTest extends UnitTestCase
     public function testAssignSuccessfully(): void
     {
         $customer = $this->buildCustomer();
-        $tariff   = $this->buildTariff(active: true);
+        $tariff = $this->buildTariff(active: true);
 
         // Нет существующей подписки
         $this->subscriptionRepository
@@ -62,7 +62,7 @@ class SubscriptionServiceTest extends UnitTestCase
     public function testAssignThrowsWhenTariffInactive(): void
     {
         $customer = $this->buildCustomer();
-        $tariff   = $this->buildTariff(active: false);
+        $tariff = $this->buildTariff(active: false);
 
         $this->em->expects(self::never())->method('persist');
         $this->em->expects(self::never())->method('flush');
@@ -78,7 +78,7 @@ class SubscriptionServiceTest extends UnitTestCase
     public function testAssignThrowsWhenAlreadySubscribed(): void
     {
         $customer = $this->buildCustomer();
-        $tariff   = $this->buildTariff(active: true);
+        $tariff = $this->buildTariff(active: true);
 
         // Уже есть активная подписка на этот тариф
         $this->subscriptionRepository

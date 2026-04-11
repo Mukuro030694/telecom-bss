@@ -28,10 +28,10 @@ class BillingServiceTest extends UnitTestCase
 
     protected function setUp(): void
     {
-        $this->invoiceRepository      = $this->createMock(InvoiceRepository::class);
+        $this->invoiceRepository = $this->createMock(InvoiceRepository::class);
         $this->subscriptionRepository = $this->createMock(SubscriptionRepository::class);
-        $this->em                     = $this->createMock(EntityManagerInterface::class);
-        $this->eventDispatcher        = $this->createMock(EventDispatcherInterface::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->service = new BillingService(
             $this->invoiceRepository,
@@ -48,7 +48,7 @@ class BillingServiceTest extends UnitTestCase
     public function testGenerateMonthlyInvoiceSuccessfully(): void
     {
         $customer = $this->buildCustomer();
-        $period   = new \DateTimeImmutable('2024-03-15');
+        $period = new \DateTimeImmutable('2024-03-15');
 
         $this->invoiceRepository
             ->method('findByCustomerAndPeriod')
@@ -76,7 +76,7 @@ class BillingServiceTest extends UnitTestCase
     public function testGenerateThrowsWhenInvoiceAlreadyExists(): void
     {
         $customer = $this->buildCustomer();
-        $period   = new \DateTimeImmutable('2024-03-01');
+        $period = new \DateTimeImmutable('2024-03-01');
 
         $this->invoiceRepository
             ->method('findByCustomerAndPeriod')
@@ -93,7 +93,7 @@ class BillingServiceTest extends UnitTestCase
     public function testGenerateThrowsWhenNoActiveSubscriptions(): void
     {
         $customer = $this->buildCustomer();
-        $period   = new \DateTimeImmutable('2024-03-01');
+        $period = new \DateTimeImmutable('2024-03-01');
 
         $this->invoiceRepository
             ->method('findByCustomerAndPeriod')

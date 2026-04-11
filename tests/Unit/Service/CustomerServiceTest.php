@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Service;
 
 use App\DTO\Customer\CreateCustomerDTO;
-use App\DTO\Customer\UpdateCustomerDTO;
 use App\Entity\Customer;
 use App\Enum\CustomerStatus;
 use App\Exception\DomainException;
@@ -32,8 +31,8 @@ class CustomerServiceTest extends UnitTestCase
         // createMock() создаёт объект который имитирует интерфейс
         // но ничего реально не делает — пока мы не скажем что делать
         $this->customerRepository = $this->createMock(CustomerRepository::class);
-        $this->em                 = $this->createMock(EntityManagerInterface::class);
-        $this->validator          = $this->createMock(ValidatorInterface::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
+        $this->validator = $this->createMock(ValidatorInterface::class);
 
         $this->service = new CustomerService(
             $this->customerRepository,
@@ -53,9 +52,9 @@ class CustomerServiceTest extends UnitTestCase
     {
         $dto = new CreateCustomerDTO(
             firstName: 'Иван',
-            lastName:  'Иванов',
-            email:     'ivan@example.com',
-            phone:     null,
+            lastName: 'Иванов',
+            email: 'ivan@example.com',
+            phone: null,
         );
 
         // Говорим валидатору: ошибок нет
@@ -87,9 +86,9 @@ class CustomerServiceTest extends UnitTestCase
     {
         $dto = new CreateCustomerDTO(
             firstName: 'Иван',
-            lastName:  'Иванов',
-            email:     'ivan@example.com',
-            phone:     null,
+            lastName: 'Иванов',
+            email: 'ivan@example.com',
+            phone: null,
         );
 
         $this->validator

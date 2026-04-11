@@ -6,7 +6,6 @@ namespace App\Tests\Unit\Entity;
 
 use App\Entity\Invoice;
 use App\Entity\InvoiceItem;
-use App\Enum\InvoiceStatus;
 use App\Tests\Unit\UnitTestCase;
 
 class InvoiceTest extends UnitTestCase

@@ -32,15 +32,15 @@ class CustomerRepositoryTest extends IntegrationTestCase
     public function testFindActiveReturnsOnlyActiveCustomers(): void
     {
         // Создаём трёх клиентов с разными статусами
-        $active    = $this->buildAndPersistCustomer('active@test.com', CustomerStatus::ACTIVE);
+        $active = $this->buildAndPersistCustomer('active@test.com', CustomerStatus::ACTIVE);
         $suspended = $this->buildAndPersistCustomer('suspended@test.com', CustomerStatus::SUSPENDED);
-        $closed    = $this->buildAndPersistCustomer('closed@test.com', CustomerStatus::CLOSED);
+        $closed = $this->buildAndPersistCustomer('closed@test.com', CustomerStatus::CLOSED);
 
         $this->flushAndClear();
 
         $result = $this->repository->findActive();
 
-        $emails = array_map(fn(Customer $c) => $c->getEmail(), $result);
+        $emails = array_map(fn (Customer $c) => $c->getEmail(), $result);
 
         self::assertContains('active@test.com', $emails);
         self::assertNotContains('suspended@test.com', $emails);
@@ -81,7 +81,7 @@ class CustomerRepositoryTest extends IntegrationTestCase
 
         $result = $this->repository->findBySearchQuery('алекс');
 
-        $emails = array_map(fn(Customer $c) => $c->getEmail(), $result);
+        $emails = array_map(fn (Customer $c) => $c->getEmail(), $result);
         self::assertContains('search@test.com', $emails);
     }
 
@@ -113,33 +113,33 @@ class CustomerRepositoryTest extends IntegrationTestCase
      */
     public function testFindAllWithSubscriptionsLoadsInSingleQuery(): void
     {
-    $customer = $this->buildAndPersistCustomer('sub@test.com', CustomerStatus::ACTIVE);
-    $tariff   = $this->buildAndPersistTariff();
+        $customer = $this->buildAndPersistCustomer('sub@test.com', CustomerStatus::ACTIVE);
+        $tariff = $this->buildAndPersistTariff();
 
-    $subscription = new Subscription();
-    $subscription->setCustomer($customer);
-    $subscription->setTariffPlan($tariff);
-    $subscription->setStartDate(new \DateTimeImmutable());
-    $subscription->setIsActive(true);
-    $this->em->persist($subscription);
+        $subscription = new Subscription();
+        $subscription->setCustomer($customer);
+        $subscription->setTariffPlan($tariff);
+        $subscription->setStartDate(new \DateTimeImmutable());
+        $subscription->setIsActive(true);
+        $this->em->persist($subscription);
 
-    $this->flushAndClear();
+        $this->flushAndClear();
 
-    $customers = $this->repository->findAllWithSubscriptions();
+        $customers = $this->repository->findAllWithSubscriptions();
 
-    self::assertNotEmpty($customers);
+        self::assertNotEmpty($customers);
 
-    // Проверяем что подписки доступны без дополнительных запросов
-    $foundCustomer = array_filter(
-        $customers,
-        fn(Customer $c) => $c->getEmail() === 'sub@test.com'
-    );
+        // Проверяем что подписки доступны без дополнительных запросов
+        $foundCustomer = array_filter(
+            $customers,
+            fn (Customer $c) => 'sub@test.com' === $c->getEmail()
+        );
 
-    self::assertCount(1, $foundCustomer);
+        self::assertCount(1, $foundCustomer);
 
-    $customer = array_values($foundCustomer)[0];
-    self::assertCount(1, $customer->getSubscriptions());
-    self::assertSame('Тестовый тариф', $customer->getSubscriptions()->first()->getTariffPlan()->getName());
+        $customer = array_values($foundCustomer)[0];
+        self::assertCount(1, $customer->getSubscriptions());
+        self::assertSame('Тестовый тариф', $customer->getSubscriptions()->first()->getTariffPlan()->getName());
     }
 
     // -------------------------------------------------------------------------
@@ -147,7 +147,7 @@ class CustomerRepositoryTest extends IntegrationTestCase
     // -------------------------------------------------------------------------
 
     private function buildAndPersistCustomer(
-        string         $email,
+        string $email,
         CustomerStatus $status,
     ): Customer {
         $customer = new Customer();
