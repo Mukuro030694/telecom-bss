@@ -49,6 +49,9 @@ COPY docker/nginx.conf /etc/nginx/nginx.conf
 # Supervisor конфиг
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# Очищаем кэш который мог собраться с dev зависимостями
+RUN rm -rf var/cache/*
+
 # Делаем скрипт исполняемым
 RUN chmod +x docker/start.sh
 
