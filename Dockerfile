@@ -23,15 +23,19 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
+# Переменные окружения для сборки
+ENV APP_ENV=prod
+ENV APP_DEBUG=0
+
 COPY composer.json composer.lock ./
 
-# Устанавливаем БЕЗ dev зависимостей
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 COPY . .
 
-# Удаляем весь кэш — он мог появиться из COPY . .
+# Удаляем кэш и дампим env
 RUN rm -rf var/cache/* var/log/*
+RUN composer dump-env prod || true
 
 RUN mkdir -p var/cache var/log \
     && chown -R www-data:www-data var/
