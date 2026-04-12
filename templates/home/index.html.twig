@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+{% from '_macros.html.twig' import money %}
+
+{% block title %}Главная{% endblock %}
+
+{% block body %}
+<h1 class="h3 mb-4">Дашборд</h1>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm text-center p-4">
+            <div class="display-4 fw-bold text-primary">{{ totalCustomers }}</div>
+            <div class="text-muted mt-2">Клиентов</div>
+            <a href="{{ path('customer_index') }}" class="btn btn-outline-primary btn-sm mt-3">
+                Перейти →
+            </a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm text-center p-4">
+            <div class="display-4 fw-bold text-warning">{{ pendingInvoices }}</div>
+            <div class="text-muted mt-2">Ожидают оплаты</div>
+            <a href="{{ path('invoice_index') }}" class="btn btn-outline-warning btn-sm mt-3">
+                Перейти →
+            </a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm text-center p-4">
+            <div class="display-4 fw-bold text-danger">{{ overdueInvoices }}</div>
+            <div class="text-muted mt-2">Просроченных</div>
+            <a href="{{ path('invoice_index') }}" class="btn btn-outline-danger btn-sm mt-3">
+                Перейти →
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
