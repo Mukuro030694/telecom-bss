@@ -14,8 +14,9 @@ class HomeController extends AbstractController
 {
     public function __construct(
         private readonly CustomerRepository $customerRepository,
-        private readonly InvoiceRepository  $invoiceRepository,
-    ) {}
+        private readonly InvoiceRepository $invoiceRepository,
+    ) {
+    }
 
     #[Route('/', name: 'homepage')]
     public function index(): Response
