@@ -92,7 +92,7 @@ jobs:
       - name: Smoke test
         run: |
           echo "Running smoke test..."
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://telecom-bss.onrender.com/customers)
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://telecom-bss-1.onrender.com/customers)
           echo "HTTP Status: $STATUS"
           if [ "$STATUS" != "200" ]; then
             echo "Smoke test failed — got HTTP $STATUS"
